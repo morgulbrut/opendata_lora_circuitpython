@@ -36,7 +36,7 @@ def sensor_autodetect():
 
 
 def read_light():
-    peak = map_range(analogin.value, 0, 65535, 0, 1500)
+    peak = analogin.value * 330 // (2 ** 16)
     if debug:
         print('Light: ' + str(analogin.value) + ' => ' + str(int(peak)))
     return int(peak)
