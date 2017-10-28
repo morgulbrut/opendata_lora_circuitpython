@@ -10,10 +10,9 @@ import math
 '''Settings'''
 debug = True
 cycles = 10
-cycletime = 2
+cycletime = 30
 
 counter = 0
-
 temp_av = 0
 hum_av = 0
 light_av = 0
