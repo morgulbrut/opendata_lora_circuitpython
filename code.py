@@ -49,7 +49,8 @@ def read_temp():
             temperature = dht.temperature
             humidity = dht.humidity
             if debug:
-                print("Temp: {:.1f} *C \t Humidity: {}% ".format(temperature, humidity))
+                print(
+                    "Temp: {:.1f} *C \t Humidity: {}% ".format(temperature, humidity))
             temp_ready = 1
             return (temperature, humidity)
         except RuntimeError as e:
@@ -89,6 +90,7 @@ def lora_reset():
 
 ''' Sets the credentials for OTAA'''
 
+
 def set_network_settings_ABP(devaddr, nwkskey, appskey):
     send_command('mac set devaddr ' + devaddr)
     send_command('mac set nwkskey ' + nwkskey)
@@ -98,7 +100,7 @@ def set_network_settings_ABP(devaddr, nwkskey, appskey):
 
 def connect(datarate='0', mode='abp', adr='off'):
     send_command('mac set dr ' + datarate)
-    send_command('mac set adr ' + adr) 
+    send_command('mac set adr ' + adr)
     send_command('mac join ' + mode)
 
 
@@ -107,11 +109,10 @@ def send_message_raw(message, confirmation='uncnf', port='1'):
 
 lora_reset()
 #set_network_settings_OTAA('00B6E3800912522F', '70B3D57ED0007DCF', '7E704FAFB81260778AC68A3A6A59274C')
-set_network_settings_ABP('26011A75', 'AA58CABBE1B4E286D1185D52C3CC669A', 'A0994B531C0CC69271B6BF472CDD0640')
+set_network_settings_ABP(
+    '26011A75', 'AA58CABBE1B4E286D1185D52C3CC669A', 'A0994B531C0CC69271B6BF472CDD0640')
 connect()
 time.sleep(2)
-
-
 
 
 while True:
@@ -125,10 +126,9 @@ while True:
     temp_av += temp[0]
     hum_av += temp[1]
     counter += 1
-    
 
     if(counter == cycles):
-        light_av = light_av / cycles #float yay
+        light_av = light_av / cycles  # float yay
         temp_av = temp_av / cycles
         temp_av = math.floor(temp_av*10)/10
         hum_av = hum_av / cycles
@@ -141,7 +141,6 @@ while True:
             print('Hum:     ' + str(hum_av))
             print('Switch:  ' + str(switch))
 
-
         payload = '0067'
         payload += '%04x' % (int(temp_av*10))
         payload += '0168'
@@ -151,9 +150,8 @@ while True:
         payload += '0300'
         payload += '%02x' % (int(switch))
 
-
         if debug:
-            print('Payload: ' + payload) 
+            print('Payload: ' + payload)
 
         send_message_raw(payload)
 
