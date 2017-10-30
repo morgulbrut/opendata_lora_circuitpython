@@ -24,6 +24,8 @@ switch_pin = DigitalInOut(board.SLIDE_SWITCH)
 switch_pin.direction = Direction.INPUT
 switch_pin.pull = Pull.UP
 i2c = io.I2C(board.SCL, board.SDA)
+import adafruit_ssd1306
+oled = adafruit_ssd1306.SSD1306_I2C(64, 48, i2c)
 dht = adafruit_dht.DHT22(board.A3)
 uart_lora = io.UART(board.TX, board.RX, baudrate=56700)
 
@@ -126,6 +128,12 @@ while True:
     temp_av += temp[0]
     hum_av += temp[1]
     counter += 1
+    oled.fill(0)
+    oled.text('Measure',0,0)
+    oled.text('L:' + str(light), 0, 9)
+    oled.text('T:' + str(temp[0]), 0, 18)
+    oled.text('H:' + str(temp[1]), 0, 27)
+    oled.show()
 
     if(counter == cycles):
         light_av = light_av / cycles  # float yay
@@ -140,6 +148,14 @@ while True:
             print('Temp:    ' + str(temp_av))
             print('Hum:     ' + str(hum_av))
             print('Switch:  ' + str(switch))
+        oled.fill(0)
+        oled.text('Transmit',0,0)
+        oled.text('L:' + str(light_av), 0, 9)
+        oled.text('T:' + str(temp_av), 0, 18)
+        oled.text('H:' + str(hum_av), 0, 27)
+        oled.text('S:' + str(switch), 0, 36)
+        oled.show()
+
 
         payload = '0067'
         payload += '%04x' % (int(temp_av*10))
