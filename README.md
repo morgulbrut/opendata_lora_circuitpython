@@ -1,3 +1,5 @@
+Please see [here for the frontend part and the project description](https://github.com/loleg/pushthebutton-server)
+
 # Hardware
 
 * Adafruit Circuit Playground Express
