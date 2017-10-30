@@ -46,17 +46,20 @@ def read_light():
 
 def read_temp():
     temp_ready = 0
-    while temp_ready == 0:
+    while temp_ready <= 20:
         try:
             temperature = dht.temperature
             humidity = dht.humidity
             if debug:
                 print(
                     "Temp: {:.1f} *C \t Humidity: {}% ".format(temperature, humidity))
-            temp_ready = 1
+            temp_ready = 20
             return (temperature, humidity)
         except RuntimeError as e:
-            pass
+            temp_ready += 1
+            time.sleep(0.05)
+            if debug:
+                print('ERROR: reading temp')
 
 # LORA stuff....
 
