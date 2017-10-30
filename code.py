@@ -107,6 +107,15 @@ com_data = f.readlines()
 f.close()
 
 for line in com_data:
+    if line.split()[0] == 'cycletime':
+        cycletime = int(line.split()[1])
+        if debug:
+            print('cycletime set to ' + str(cycletime))
+    elif line.split()[0] == 'cycles':
+        cycles = int(line.split()[1])
+        if debug:
+            print('cycles set to ' + str(cycletime))
+    else:
     send_command(line)
 
 

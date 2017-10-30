@@ -1,3 +1,5 @@
+cycletime 5
+cycles 20
 mac set devaddr 26011A75
 mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A
 mac set appskey A0994B531C0CC69271B6BF472CDD0640
