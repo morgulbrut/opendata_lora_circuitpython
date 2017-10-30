@@ -101,6 +101,16 @@ oled.text('Init..',0,0)
 oled.show()
 
 lora_reset()
+
+f = open('comissioning.txt')
+com_data = f.readlines()
+f.close()
+
+for line in com_data:
+    send_command(line)
+
+
+'''
 if switch_pin.value:
     oled.text('OTAA',0,9)
     oled.show()
@@ -123,6 +133,7 @@ else:
     oled.text('joining',0,18)
     oled.show()
     send_command('mac join abp')
+'''
 
 oled.fill(0)
 oled.text('Done..',0,0)

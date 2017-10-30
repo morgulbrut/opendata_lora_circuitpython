@@ -1,0 +1,6 @@
+mac set devaddr 26011A75
+mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A
+mac set appskey A0994B531C0CC69271B6BF472CDD0640
+mac set dr 0
+mac set adr 0
+mac join abp
