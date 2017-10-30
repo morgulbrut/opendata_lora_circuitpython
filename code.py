@@ -116,7 +116,7 @@ for line in com_data:
         if debug:
             print('cycles set to ' + str(cycletime))
     else:
-    send_command(line)
+        send_command(line)
 
 
 '''
@@ -162,7 +162,7 @@ while True:
     hum_av += temp[1]
     counter += 1
     oled.fill(0)
-    oled.text('Measure',0,0)
+    oled.text('Meas: ' + str(counter) ,0,0)
     oled.text('L:' + str(light), 0, 9)
     oled.text('T:' + str(temp[0]), 0, 18)
     oled.text('H:' + str(temp[1]), 0, 27)
