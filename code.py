@@ -93,32 +93,42 @@ def lora_reset():
     lora_reset_pin.value = True
     send_command('sys get ver')
 
-''' Sets the credentials for OTAA'''
-
-
-def set_network_settings_ABP(devaddr, nwkskey, appskey):
-    send_command('mac set devaddr ' + devaddr)
-    send_command('mac set nwkskey ' + nwkskey)
-    send_command('mac set appskey ' + appskey)
-    send_command('mac save')
-
-
-def connect(datarate='0', mode='abp', adr='off'):
-    send_command('mac set dr ' + datarate)
-    send_command('mac set adr ' + adr)
-    send_command('mac join ' + mode)
-
-
 def send_message_raw(message, confirmation='uncnf', port='1'):
     send_command('mac tx ' + confirmation + ' ' + port + ' ' + message)
 
-lora_reset()
-#set_network_settings_OTAA('00B6E3800912522F', '70B3D57ED0007DCF', '7E704FAFB81260778AC68A3A6A59274C')
-set_network_settings_ABP(
-    '26011A75', 'AA58CABBE1B4E286D1185D52C3CC669A', 'A0994B531C0CC69271B6BF472CDD0640')
-connect()
-time.sleep(2)
+oled.fill(0)
+oled.text('Init..',0,0)
+oled.show()
 
+lora_reset()
+if switch_pin.value:
+    oled.text('OTAA',0,9)
+    oled.show()
+    send_command('mac set deveui 00B6E3800912522F')
+    send_command('mac set appeui 70B3D57ED0007DCF' )
+    send_command('mac set appkey 7E704FAFB81260778AC68A3A6A59274C')
+    send_command('mac set dr 0')
+    send_command('mac set adr 0')
+    oled.text('joining',0,18)
+    oled.show()
+    send_command('mac join otaa')
+else:
+    oled.text('ABP',0,9)
+    oled.show()
+    send_command('mac set devaddr 26011A75')
+    send_command('mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A')
+    send_command('mac set appskey A0994B531C0CC69271B6BF472CDD0640')
+    send_command('mac set dr 0')
+    send_command('mac set adr 0')
+    oled.text('joining',0,18)
+    oled.show()
+    send_command('mac join abp')
+
+oled.fill(0)
+oled.text('Done..',0,0)
+oled.show()
+
+time.sleep(2)
 
 while True:
     if debug:
