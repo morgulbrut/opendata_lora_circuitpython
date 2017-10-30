@@ -24,6 +24,8 @@ switch_pin = DigitalInOut(board.SLIDE_SWITCH)
 switch_pin.direction = Direction.INPUT
 switch_pin.pull = Pull.UP
 i2c = io.I2C(board.SCL, board.SDA)
+import adafruit_ssd1306
+oled = adafruit_ssd1306.SSD1306_I2C(64, 48, i2c)
 dht = adafruit_dht.DHT22(board.A3)
 uart_lora = io.UART(board.TX, board.RX, baudrate=56700)
 
@@ -36,7 +38,7 @@ def sensor_autodetect():
 
 
 def read_light():
-    peak = map_range(analogin.value, 0, 65535, 0, 1500)
+    peak = analogin.value * 330 // (2 ** 16)
     if debug:
         print('Light: ' + str(analogin.value) + ' => ' + str(int(peak)))
     return int(peak)
@@ -44,17 +46,20 @@ def read_light():
 
 def read_temp():
     temp_ready = 0
-    while temp_ready == 0:
+    while temp_ready <= 20:
         try:
             temperature = dht.temperature
             humidity = dht.humidity
             if debug:
                 print(
                     "Temp: {:.1f} *C \t Humidity: {}% ".format(temperature, humidity))
-            temp_ready = 1
+            temp_ready = 20
             return (temperature, humidity)
         except RuntimeError as e:
-            pass
+            temp_ready += 1
+            time.sleep(0.05)
+            if debug:
+                print('ERROR: reading temp')
 
 # LORA stuff....
 
@@ -88,32 +93,64 @@ def lora_reset():
     lora_reset_pin.value = True
     send_command('sys get ver')
 
-''' Sets the credentials for OTAA'''
-
-
-def set_network_settings_ABP(devaddr, nwkskey, appskey):
-    send_command('mac set devaddr ' + devaddr)
-    send_command('mac set nwkskey ' + nwkskey)
-    send_command('mac set appskey ' + appskey)
-    send_command('mac save')
-
-
-def connect(datarate='0', mode='abp', adr='off'):
-    send_command('mac set dr ' + datarate)
-    send_command('mac set adr ' + adr)
-    send_command('mac join ' + mode)
-
-
 def send_message_raw(message, confirmation='uncnf', port='1'):
     send_command('mac tx ' + confirmation + ' ' + port + ' ' + message)
 
-lora_reset()
-#set_network_settings_OTAA('00B6E3800912522F', '70B3D57ED0007DCF', '7E704FAFB81260778AC68A3A6A59274C')
-set_network_settings_ABP(
-    '26011A75', 'AA58CABBE1B4E286D1185D52C3CC669A', 'A0994B531C0CC69271B6BF472CDD0640')
-connect()
-time.sleep(2)
+oled.fill(0)
+oled.text('Init..',0,0)
+oled.show()
 
+lora_reset()
+
+f = open('comissioning.txt')
+com_data = f.readlines()
+f.close()
+
+for line in com_data:
+    if line[0] == '#':
+        pass
+    elif line.split()[0] == 'cycletime':
+        cycletime = int(line.split()[1])
+        if debug:
+            print('cycletime set to ' + str(cycletime))
+    elif line.split()[0] == 'cycles':
+        cycles = int(line.split()[1])
+        if debug:
+            print('cycles set to ' + str(cycletime))
+    else:
+        send_command(line)
+
+
+'''
+if switch_pin.value:
+    oled.text('OTAA',0,9)
+    oled.show()
+    send_command('mac set deveui 00B6E3800912522F')
+    send_command('mac set appeui 70B3D57ED0007DCF' )
+    send_command('mac set appkey 7E704FAFB81260778AC68A3A6A59274C')
+    send_command('mac set dr 0')
+    send_command('mac set adr 0')
+    oled.text('joining',0,18)
+    oled.show()
+    send_command('mac join otaa')
+else:
+    oled.text('ABP',0,9)
+    oled.show()
+    send_command('mac set devaddr 26011A75')
+    send_command('mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A')
+    send_command('mac set appskey A0994B531C0CC69271B6BF472CDD0640')
+    send_command('mac set dr 0')
+    send_command('mac set adr 0')
+    oled.text('joining',0,18)
+    oled.show()
+    send_command('mac join abp')
+'''
+
+oled.fill(0)
+oled.text('Done..',0,0)
+oled.show()
+
+time.sleep(2)
 
 while True:
     if debug:
@@ -126,6 +163,12 @@ while True:
     temp_av += temp[0]
     hum_av += temp[1]
     counter += 1
+    oled.fill(0)
+    oled.text('Meas: ' + str(counter) ,0,0)
+    oled.text('L:' + str(light), 0, 9)
+    oled.text('T:' + str(temp[0]), 0, 18)
+    oled.text('H:' + str(temp[1]), 0, 27)
+    oled.show()
 
     if(counter == cycles):
         light_av = light_av / cycles  # float yay
@@ -140,6 +183,14 @@ while True:
             print('Temp:    ' + str(temp_av))
             print('Hum:     ' + str(hum_av))
             print('Switch:  ' + str(switch))
+        oled.fill(0)
+        oled.text('Transmit',0,0)
+        oled.text('L:' + str(light_av), 0, 9)
+        oled.text('T:' + str(temp_av), 0, 18)
+        oled.text('H:' + str(hum_av), 0, 27)
+        oled.text('S:' + str(switch), 0, 36)
+        oled.show()
+
 
         payload = '0067'
         payload += '%04x' % (int(temp_av*10))
