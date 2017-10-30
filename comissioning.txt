@@ -1,8 +1,12 @@
-cycletime 5
-cycles 20
+#cycletime 5
+#cycles 20
+#mac set deveui 00B6E3800912522F
+#mac set appeui 70B3D57ED0007DCF
+#mac set appkey 7E704FAFB81260778AC68A3A6A59274C
 mac set devaddr 26011A75
 mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A
 mac set appskey A0994B531C0CC69271B6BF472CDD0640
-mac set dr 0
-mac set adr 0
+mac set dr 5
+mac set adr off
+#mac join otaa
 mac join abp
