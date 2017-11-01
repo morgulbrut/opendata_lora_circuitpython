@@ -132,6 +132,8 @@ while True:
     # sensor_autodetect()
 
     temp = read_temp()
+    while  temp[0] > 100 or temp[1] > 100:
+        temp = read_temp()
     light = read_light()
     light_av += light
     temp_av += temp[0]
