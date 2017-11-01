@@ -6,6 +6,7 @@ import board
 import adafruit_dht
 import time
 import math
+import adafruit_ssd1306
 
 '''Settings'''
 debug = True
@@ -24,7 +25,6 @@ switch_pin = DigitalInOut(board.SLIDE_SWITCH)
 switch_pin.direction = Direction.INPUT
 switch_pin.pull = Pull.UP
 i2c = io.I2C(board.SCL, board.SDA)
-import adafruit_ssd1306
 oled = adafruit_ssd1306.SSD1306_I2C(64, 48, i2c)
 dht = adafruit_dht.DHT22(board.A3)
 uart_lora = io.UART(board.TX, board.RX, baudrate=56700)
