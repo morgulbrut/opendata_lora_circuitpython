@@ -120,32 +120,6 @@ for line in com_data:
     else:
         send_command(line)
 
-
-'''
-if switch_pin.value:
-    oled.text('OTAA',0,9)
-    oled.show()
-    send_command('mac set deveui 00B6E3800912522F')
-    send_command('mac set appeui 70B3D57ED0007DCF' )
-    send_command('mac set appkey 7E704FAFB81260778AC68A3A6A59274C')
-    send_command('mac set dr 0')
-    send_command('mac set adr 0')
-    oled.text('joining',0,18)
-    oled.show()
-    send_command('mac join otaa')
-else:
-    oled.text('ABP',0,9)
-    oled.show()
-    send_command('mac set devaddr 26011A75')
-    send_command('mac set nwkskey AA58CABBE1B4E286D1185D52C3CC669A')
-    send_command('mac set appskey A0994B531C0CC69271B6BF472CDD0640')
-    send_command('mac set dr 0')
-    send_command('mac set adr 0')
-    oled.text('joining',0,18)
-    oled.show()
-    send_command('mac join abp')
-'''
-
 oled.fill(0)
 oled.text('Done..',0,0)
 oled.show()
